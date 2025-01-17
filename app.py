@@ -112,8 +112,8 @@ if st.button("Get Similar Movie Recommendations"):
     user_input = {
         "rating": movie_rating or "Not available",
         "genres": movie_genres,
-        "content_restrictions": "The movie should not contain adult content or explicit scenes. The runtime should be less than 2 hours.",  # Default if not provided by the user
-        "year_range": "Movies from 2010-2024"  # Set default if no input is provided
+        "content_restrictions": "The movie may or may not have adult content. No time duration limit.",  # Default if not provided by the user
+        "year_range": "Movies from 1900-2024"  # Set default if no input is provided
     }
 
     # Process the preferences input
@@ -122,7 +122,7 @@ if st.button("Get Similar Movie Recommendations"):
         liked_part = None
         disliked_part = None
         year_range = None
-        content_restrictions = "The movie should not contain adult content or explicit scenes."  # Default
+        content_restrictions = "The movie may or may not have adult content."  # Default
 
         # If the user described liked/disliked parts
         if "liked" in preferences_input.lower():
