@@ -10,7 +10,7 @@ ia = IMDb()
 
 # Streamlit UI
 st.title("🎥 Similar Movie Recommendation Assistant")
-st.subheader("Step 1: Enter API Key")
+st.subheader("Enter API Key :")
 
 # User input for API key
 groq_api_key = st.text_input("Enter your Groq API Key", type="password")
@@ -39,6 +39,7 @@ synopsis_prompt_template = ChatPromptTemplate.from_template(
 
     Additional Preferences:
     {content_restrictions}
+    Year Range: {year_range}
 
     Your Response:
     Provide a list of 6-7 movies with their titles, years, countries, IMDb ratings, storylines, and explain the similarity of each movie with the provided movie's storyline.
@@ -62,6 +63,7 @@ plot_prompt_template = ChatPromptTemplate.from_template(
 
     Additional Preferences:
     {content_restrictions}
+    Year Range: {year_range}
 
     Your Response:
     Provide a list of 6-7 movies with their titles, years, countries, IMDb ratings, storylines, and explain the similarity of each movie with the provided movie's storyline.
@@ -74,35 +76,11 @@ movie_year = st.number_input("Enter Movie Year", min_value=1900, max_value=2024,
 
 # Collapsible User Preference Section
 with st.expander("Click to Add Your Movie Preferences (Optional)"):
-    st.markdown("""
-    **Please describe the following in your preferences (Optional):**
-    - **Liked Parts**: What you liked about the movie (e.g., suspense, plot twist, atmosphere).
-    - **Disliked Parts**: What you didn’t like about the movie (e.g., too violent, too slow).
-    - **Content Restrictions**: Any content restrictions (e.g., no violence, no explicit scenes).
-    - **Year Range**: Specific year range (e.g., movies from 2000-2010).
-    
-    **Example Format for Preferences**:
-    ```text
-    Liked Parts: I enjoy supernatural thrillers with a strong female lead and suspenseful plots. I liked the mystery around the house and the eerie atmosphere.
-    Disliked Parts: I don't like overly violent movies. I prefer psychological thrillers.
-    Content Restrictions: I prefer PG-13 movies without extreme violence.
-    Year Range: Movies from 2000-2010.
-    ```
-    """)
+    st.markdown("""**Please describe the following in your preferences (Optional):**""")
 
 preferences_input = st.text_area(
     "Enter your movie preferences (liked part, disliked part, content restrictions, year range, etc.)",
     help="Describe the parts of the movie you liked, disliked, content restrictions, and any specific year range you're interested in."
-)
-
-# Default content restrictions
-default_content_restrictions = "The movie may or may not have adult content. No time duration limit."
-
-# Streamlit UI for content preferences
-content_restrictions_input = st.text_area(
-    "Enter your content preferences (Optional)",
-    value=default_content_restrictions,
-    help="You can modify the content preferences regarding adult content and movie duration if desired."
 )
 
 if st.button("Get Similar Movie Recommendations"):
@@ -134,7 +112,8 @@ if st.button("Get Similar Movie Recommendations"):
     user_input = {
         "rating": movie_rating or "Not available",
         "genres": movie_genres,
-        "content_restrictions": content_restrictions_input if content_restrictions_input else default_content_restrictions
+        "content_restrictions": "The movie should not contain adult content or explicit scenes. The runtime should be less than 2 hours.",  # Default if not provided by the user
+        "year_range": "Movies from 2010-2024"  # Set default if no input is provided
     }
 
     # Process the preferences input
@@ -143,6 +122,7 @@ if st.button("Get Similar Movie Recommendations"):
         liked_part = None
         disliked_part = None
         year_range = None
+        content_restrictions = "The movie should not contain adult content or explicit scenes."  # Default
 
         # If the user described liked/disliked parts
         if "liked" in preferences_input.lower():
@@ -155,8 +135,14 @@ if st.button("Get Similar Movie Recommendations"):
         if "year range" in preferences_input.lower():
             year_range = preferences_input.lower()
 
+        if year_range:
+            user_input["year_range"] = year_range
+
+        if "content restrictions" in preferences_input.lower():
+            content_restrictions = preferences_input.lower()
+
         # Based on the input, create the appropriate prompt
-        user_input["content_restrictions"] = content_restrictions_input if content_restrictions_input else default_content_restrictions
+        user_input["content_restrictions"] = content_restrictions
         
         if liked_part:
             user_input["storyline"] = liked_part
