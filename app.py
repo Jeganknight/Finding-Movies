@@ -76,7 +76,21 @@ movie_year = st.number_input("Enter Movie Year", min_value=1900, max_value=2024,
 
 # Collapsible User Preference Section
 with st.expander("Click to Add Your Movie Preferences (Optional)"):
-    st.markdown("""**Please describe the following in your preferences (Optional):**""")
+    st.markdown("""
+    **Please describe the following in your preferences (Optional):**
+    - **Liked Parts**: What you liked about the movie (e.g., suspense, plot twist, atmosphere).
+    - **Disliked Parts**: What you didn’t like about the movie (e.g., too violent, too slow).
+    - **Content Restrictions**: Any content restrictions (e.g., no violence, no explicit scenes).
+    - **Year Range**: Specific year range (e.g., movies from 2000-2010).
+    
+    **Example Format for Preferences**:
+    ```text
+    Liked Parts: I enjoy supernatural thrillers with a strong female lead and suspenseful plots. I liked the mystery around the house and the eerie atmosphere.
+    Disliked Parts: I don't like overly violent movies. I prefer psychological thrillers.
+    Content Restrictions: I prefer PG-13 movies without extreme violence.
+    Year Range: Movies from 2000-2010.
+    ```
+    """)
 
 preferences_input = st.text_area(
     "Enter your movie preferences (liked part, disliked part, content restrictions, year range, etc.)",
